@@ -4,22 +4,23 @@ const seed = require("../db/seeds/seed");
 const app = require("../db/app");
 const request = require("supertest");
 
-// const seed = importedFromDBSeed.seed;
-
 beforeEach(() => seed(data));
 afterAll(() => db.end());
 
-describe("/api/topics", () => {
-  test("get 200, sends an array of topics to the client", () => {
+describe("/api/topics tests", () => {
+  test("200: sends an array of topics to the client", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
       .then((response) => {
-        expect(response.body.topics.length).toBeGreaterThan(0); /// this will test that returned array is not empty
+        expect(response.body.topics.length).toBeGreaterThan(0);
         response.body.topics.forEach((topic) => {
           expect(topic).toHaveProperty("slug");
           expect(topic).toHaveProperty("description");
         });
       });
+  });
+  test("404: endpoint that does not exist", () => {
+    return request(app).get("/api/unknownendpoint").expect(404);
   });
 });
