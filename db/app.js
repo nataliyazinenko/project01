@@ -2,6 +2,7 @@ const express = require("express");
 const {
   getAllTopics,
   getEndpointsDocumentation,
+  getAllArticles,
   getArticleById,
 } = require("./controllers");
 
@@ -12,6 +13,8 @@ app.use(express.json());
 app.get("/api", getEndpointsDocumentation);
 
 app.get("/api/topics", getAllTopics);
+
+app.get("/api/articles", getAllArticles);
 
 app.get("/api/articles/:article_id", getArticleById);
 
