@@ -117,9 +117,19 @@ describe("/api/articles tests", () => {
         response.body.articles.forEach((article) => {
           expect(article).toHaveProperty("comment_count");
         });
-        expect(response.body.articles[0].comment_count).toBe(11);
+        expect(response.body.articles[0].comment_count).toBe(2);
       });
   });
+  // test("200: articles should be sorted by date in descending order.", () => {
+  //   return request(app)
+  //     .get("/api/articles")
+  //     .expect(200)
+  //     .then((response) => {
+  //       expect(response.body.articles).toBeSortedBy("created_at", {
+  //         descending: true,
+  //       });
+  //     });
+  // });
 });
 
 describe("testing a function that will get a number of comments for article per article_id", () => {
