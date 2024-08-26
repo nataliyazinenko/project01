@@ -54,7 +54,7 @@ describe("/api/articles/:article_id tests", () => {
         expect(response.body.article).toHaveProperty("article_img_url");
       });
   });
-  ("");
+
   test("400: responds with bad request for invalid article id", () => {
     return request(app)
       .get("/api/articles/one")
@@ -122,7 +122,19 @@ describe("/api/articles tests", () => {
         expect(response.body.articles[0].comment_count).toBe(2);
       });
   });
+  test("404: incorrect endpoint", () => {
+    return request(app).get("/api/articules").expect(404);
+  });
+  test("400: invalid sort_by query", () => {
+    return request(app)
+      .get("/api/articles?sort_by=something")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Invalid sort_by.");
+      });
+  });
 });
+
 //WIP
 //   test("200: accepts a created_at query and sorts the articles by date in descending order.", () => {
 //     return request(app)

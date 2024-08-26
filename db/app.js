@@ -32,4 +32,17 @@ app.use((err, req, res, next) => {
   } else next(err);
 });
 
+app.use((err, req, res, next) => {
+  if (err.message === "Invalid sort_by.") {
+    res.status(400).send(err);
+  } else next(err);
+});
+
+app.use((err, req, res, next) => {
+  console.log("!ERRORRRmiddlew", err);
+  if (err.message === "Invalid sort_by.") {
+    res.status(400).send(err);
+  } else next(err);
+});
+
 module.exports = app;

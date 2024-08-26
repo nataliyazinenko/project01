@@ -19,7 +19,7 @@ exports.fetchArticles = (sort_by) => {
 
   if (sort_by) {
     if (!sortableColumns.includes(sort_by)) {
-      return Promise.reject({ status: 400, message: "Bad request." });
+      return Promise.reject({ status: 400, message: "Invalid sort_by." });
     } else {
       queryStr += ` ORDER BY ${sort_by} DESC`;
     }
@@ -28,10 +28,8 @@ exports.fetchArticles = (sort_by) => {
   return db.query(queryStr).then((result) => {
     result.rows.forEach((article) => {
       article.comment_count = Number(article.comment_count);
-      console.log("!!!", article);
       return article;
     });
-    console.log("!!!???????", result.rows);
     return result.rows;
   });
 };
