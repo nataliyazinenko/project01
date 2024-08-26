@@ -6,39 +6,35 @@ exports.fetchTopics = () => {
   });
 };
 
-exports.fetchArticles = () => {
-  return db
-    .query(
-      "SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url FROM articles ORDER BY created_at DESC;"
-    )
-    .then((result) => {
-      const articles = result.rows;
+exports.fetchArticles = (sort_by) => {
+  const queryStr =
+    "SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, (SELECT COUNT (*) FROM comments WHERE comments.article_id = articles.article_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id;";
+  const sortableColumns = [
+    "author",
+    "article_id",
+    "topic",
+    "created_at",
+    "votes",
+  ];
 
-      const articlesWithCommentsCountsPromises = articles.map((article) => {
-        const article_id = article.article_id;
-        return countComments(article_id).then((count) => {
-          article.comment_count = count;
-          return article;
-        });
-      });
+  if (sort_by) {
+    if (!sortableColumns.includes(sort_by)) {
+      return Promise.reject({ status: 400, message: "Bad request." });
+    } else {
+      queryStr += ` ORDER BY ${sort_by} DESC`;
+    }
+  }
 
-      return Promise.all(articlesWithCommentsCountsPromises);
+  return db.query(queryStr).then((result) => {
+    result.rows.forEach((article) => {
+      article.comment_count = Number(article.comment_count);
+      console.log("!!!", article);
+      return article;
     });
+    console.log("!!!???????", result.rows);
+    return result.rows;
+  });
 };
-
-// this function will get a number of comments for article per article_id
-async function countComments(article_id) {
-  return db
-    .query(
-      "SELECT COUNT(comment_id) FROM comments WHERE comments.article_id = $1;",
-      [article_id]
-    )
-    .then((result) => {
-      const commentCount = Number(result.rows[0].count);
-      return commentCount;
-    });
-}
-exports.countComments = countComments;
 
 exports.fetchArticleById = (article_id) => {
   return db

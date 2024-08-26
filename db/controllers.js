@@ -23,7 +23,8 @@ exports.getAllTopics = (req, res, next) => {
 };
 
 exports.getAllArticles = (req, res, next) => {
-  fetchArticles()
+  const { sort_by } = req.query;
+  fetchArticles(sort_by)
     .then((articles) => {
       res.status(200).send({ articles });
     })
