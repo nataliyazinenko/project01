@@ -30,7 +30,10 @@ exports.fetchArticles = (sort_by) => {
 
 exports.fetchArticleById = (article_id) => {
   return db
-    .query("SELECT * FROM articles WHERE article_id = $1;", [article_id])
+    .query(
+      "SELECT * FROM articles WHERE article_id = $1 ORDER BY created_at DESC;",
+      [article_id]
+    )
     .then((article) => {
       if (article.rows.length === 0) {
         return Promise.reject({ msg: "article does not exist" });
@@ -48,7 +51,7 @@ exports.fetchArticleComments = (article_id) => {
           msg: "This article hasn't received any comments.",
         });
       }
-      console.log(comments.rows);
+
       return comments.rows;
     });
 };

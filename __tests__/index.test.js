@@ -143,6 +143,9 @@ describe("/api/articles/:article_id/comments tests", () => {
       .expect(200)
       .then((response) => {
         console.log("response!!!!", response.body);
+        expect(response.body.comments).toBeSortedBy("created_at", {
+          descending: true,
+        });
         expect(response.body.comments).toMatchObject([
           {
             comment_id: 1,
