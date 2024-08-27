@@ -85,7 +85,7 @@ describe("/api/articles tests", () => {
       .get("/api/articles")
       .expect(200)
       .then((response) => {
-        expect(response.body.articles.length).toBeGreaterThan(0);
+        expect(response.body.articles.length).toBe(13);
         expect(Array.isArray(response.body.articles)).toBeTruthy();
       });
   });
