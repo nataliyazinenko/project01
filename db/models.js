@@ -19,12 +19,10 @@ exports.fetchArticles = (sort_by) => {
     }
   }
 
-  //console.log("querySTr!!!", queryStr);
   return db.query(queryStr).then((result) => {
     result.rows.forEach((article) => {
       article.comment_count = Number(article.comment_count);
     });
-    console.log("RESULT ROWS", result.rows);
     return result.rows;
   });
 };
@@ -39,7 +37,3 @@ exports.fetchArticleById = (article_id) => {
       return article.rows[0];
     });
 };
-
-//to do:
-//sort_by
-//test if the articles are distinct??

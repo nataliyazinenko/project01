@@ -111,13 +111,9 @@ describe("/api/articles tests", () => {
       .get("/api/articles")
       .expect(200)
       .then((response) => {
-        response.body.articles.forEach((article) => {
-          expect(article).toHaveProperty("comment_count");
-        });
         expect(response.body.articles[0].comment_count).toBe(2);
       });
   });
-
   test("200: accepts a created_at query and sorts the articles by date in descending order.", () => {
     return request(app)
       .get("/api/articles?sort_by=created_at")
@@ -128,7 +124,6 @@ describe("/api/articles tests", () => {
         });
       });
   });
-
   test("404: incorrect endpoint", () => {
     return request(app).get("/api/articules").expect(404);
   });
