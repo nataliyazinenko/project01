@@ -7,29 +7,24 @@ exports.fetchTopics = () => {
 };
 
 exports.fetchArticles = (sort_by) => {
-  const queryStr =
-    "SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, (SELECT COUNT (*) FROM comments WHERE comments.article_id = articles.article_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id;";
-  const sortableColumns = [
-    "author",
-    "article_id",
-    "topic",
-    "created_at",
-    "votes",
-  ];
+  let queryStr =
+    "SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, (SELECT COUNT (*) FROM comments WHERE comments.article_id = articles.article_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id GROUP BY articles.article_id";
+  const sortableColumns = ["created_at"];
 
   if (sort_by) {
-    if (!sortableColumns.includes(sort_by)) {
-      return Promise.reject({ status: 400, message: "Invalid sort_by." });
-    } else {
+    if (sortableColumns.includes(sort_by)) {
       queryStr += ` ORDER BY ${sort_by} DESC`;
+    } else {
+      return Promise.reject({ status: 400, message: "Invalid sort_by." });
     }
   }
 
+  //console.log("querySTr!!!", queryStr);
   return db.query(queryStr).then((result) => {
     result.rows.forEach((article) => {
       article.comment_count = Number(article.comment_count);
-      return article;
     });
+    console.log("RESULT ROWS", result.rows);
     return result.rows;
   });
 };
@@ -44,3 +39,7 @@ exports.fetchArticleById = (article_id) => {
       return article.rows[0];
     });
 };
+
+//to do:
+//sort_by
+//test if the articles are distinct??
