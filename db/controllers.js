@@ -1,4 +1,9 @@
-const { fetchTopics, fetchArticleById, fetchArticles } = require("./models");
+const {
+  fetchTopics,
+  fetchArticleById,
+  fetchArticles,
+  fetchArticleComments,
+} = require("./models");
 const fs = require("fs/promises");
 
 exports.getEndpointsDocumentation = (req, res, next) => {
@@ -42,4 +47,13 @@ exports.getArticleById = (req, res, next) => {
     .catch((err) => {
       next(err);
     });
+};
+
+exports.getArticleComments = (req, res, next) => {
+  const { article_id } = req.params;
+  fetchArticleComments(article_id)
+    .then((comments) => {
+      res.status(200).send({ comments });
+    })
+    .catch((err) => next(err));
 };

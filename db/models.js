@@ -23,6 +23,7 @@ exports.fetchArticles = (sort_by) => {
     result.rows.forEach((article) => {
       article.comment_count = Number(article.comment_count);
     });
+
     return result.rows;
   });
 };
@@ -35,5 +36,19 @@ exports.fetchArticleById = (article_id) => {
         return Promise.reject({ msg: "article does not exist" });
       }
       return article.rows[0];
+    });
+};
+
+exports.fetchArticleComments = (article_id) => {
+  return db
+    .query("SELECT * FROM comments WHERE article_id = $1", [article_id])
+    .then((comments) => {
+      if (comments.rows.length === 0) {
+        return Promise.reject({
+          msg: "This article hasn't received any comments.",
+        });
+      }
+      console.log(comments.rows);
+      return comments.rows;
     });
 };
