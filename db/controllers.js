@@ -1,4 +1,4 @@
-const { fetchTopics, fetchArticleById } = require("./models");
+const { fetchTopics, fetchArticleById, fetchArticles } = require("./models");
 const fs = require("fs/promises");
 
 exports.getEndpointsDocumentation = (req, res, next) => {
@@ -16,6 +16,17 @@ exports.getAllTopics = (req, res, next) => {
   fetchTopics()
     .then((topics) => {
       res.status(200).send({ topics });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.getAllArticles = (req, res, next) => {
+  const { sort_by } = req.query;
+  fetchArticles(sort_by)
+    .then((articles) => {
+      res.status(200).send({ articles });
     })
     .catch((err) => {
       next(err);

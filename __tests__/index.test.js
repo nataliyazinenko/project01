@@ -26,7 +26,7 @@ describe("/api/topics tests", () => {
 });
 
 describe("/api tests", () => {
-  test("documents available endpoints", () => {
+  test("200: documents available endpoints", () => {
     return request(app)
       .get("/api")
       .expect(200)
@@ -45,6 +45,7 @@ describe("/api/articles/:article_id tests", () => {
         expect(response.body.article.article_id).toBe(1);
         expect(response.body.article).toHaveProperty("author");
         expect(response.body.article).toHaveProperty("title");
+        expect(response.body.article).toHaveProperty("article_id");
         expect(response.body.article).toHaveProperty("body");
         expect(response.body.article).toHaveProperty("topic");
         expect(response.body.article).toHaveProperty("created_at");
@@ -52,7 +53,7 @@ describe("/api/articles/:article_id tests", () => {
         expect(response.body.article).toHaveProperty("article_img_url");
       });
   });
-  ("");
+
   test("400: responds with bad request for invalid article id", () => {
     return request(app)
       .get("/api/articles/one")
@@ -61,6 +62,7 @@ describe("/api/articles/:article_id tests", () => {
         expect(response.body.message).toBe("Bad request.");
       });
   });
+
   test("404: responds with not found for valid but non-existent article id", () => {
     return request(app)
       .get("/api/articles/11111111111111111111111")
@@ -71,7 +73,66 @@ describe("/api/articles/:article_id tests", () => {
         );
       });
   });
-  test("404: missing article id", () => {
-    return request(app).get("/api/articles/").expect(404);
+
+  test("200: sends an array of all articles if article id is not specified", () => {
+    return request(app).get("/api/articles/").expect(200);
+  });
+});
+
+describe("/api/articles tests", () => {
+  test("200: sends an array of articles to the client", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles.length).toBe(13);
+        expect(Array.isArray(response.body.articles)).toBeTruthy();
+      });
+  });
+  test("200: each article should have the properties of author, title, article_id, topic, created_at, votes, article_img_url and not have a body property", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then((response) => {
+        response.body.articles.forEach((article) => {
+          expect(article).toHaveProperty("author");
+          expect(article).toHaveProperty("title");
+          expect(article).toHaveProperty("article_id");
+          expect(article).toHaveProperty("topic");
+          expect(article).toHaveProperty("created_at");
+          expect(article).toHaveProperty("votes");
+          expect(article).toHaveProperty("article_img_url");
+          expect(article).not.toHaveProperty("body");
+        });
+      });
+  });
+  test("200: each article should have the comment_count, which is the total count of all the comments with this article_id.", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles[0].comment_count).toBe(2);
+      });
+  });
+  test("200: accepts a created_at query and sorts the articles by date in descending order.", () => {
+    return request(app)
+      .get("/api/articles?sort_by=created_at")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
+  test("404: incorrect endpoint", () => {
+    return request(app).get("/api/articules").expect(404);
+  });
+  test("400: invalid sort_by query", () => {
+    return request(app)
+      .get("/api/articles?sort_by=something")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Invalid sort_by.");
+      });
   });
 });
