@@ -142,10 +142,6 @@ describe("/api/articles/:article_id/comments tests", () => {
       .get("/api/articles/9/comments")
       .expect(200)
       .then((response) => {
-        console.log("response!!!!", response.body);
-        expect(response.body.comments).toBeSortedBy("created_at", {
-          descending: true,
-        });
         expect(response.body.comments).toMatchObject([
           {
             comment_id: 1,
@@ -166,4 +162,17 @@ describe("/api/articles/:article_id/comments tests", () => {
         ]);
       });
   });
+  test("200: accepts a created_at query and sorts the comments by date in descending order.", () => {
+    return request(app)
+      .get("/api/articles/9/comments?sort_by=created_at")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.comments).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
 });
+
+//to do:
+//error testing

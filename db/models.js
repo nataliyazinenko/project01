@@ -30,10 +30,7 @@ exports.fetchArticles = (sort_by) => {
 
 exports.fetchArticleById = (article_id) => {
   return db
-    .query(
-      "SELECT * FROM articles WHERE article_id = $1 ORDER BY created_at DESC;",
-      [article_id]
-    )
+    .query("SELECT * FROM articles WHERE article_id = $1;", [article_id])
     .then((article) => {
       if (article.rows.length === 0) {
         return Promise.reject({ msg: "article does not exist" });
@@ -42,16 +39,25 @@ exports.fetchArticleById = (article_id) => {
     });
 };
 
-exports.fetchArticleComments = (article_id) => {
-  return db
-    .query("SELECT * FROM comments WHERE article_id = $1", [article_id])
-    .then((comments) => {
-      if (comments.rows.length === 0) {
-        return Promise.reject({
-          msg: "This article hasn't received any comments.",
-        });
-      }
+exports.fetchArticleComments = (article_id, sort_by) => {
+  let queryStr = "SELECT * FROM comments WHERE article_id = $1";
+  const sortableColumns = ["created_at"];
 
-      return comments.rows;
-    });
+  if (sort_by) {
+    if (sortableColumns.includes(sort_by)) {
+      queryStr += ` ORDER BY ${sort_by} DESC`;
+    } else {
+      return Promise.reject({ status: 400, message: "Invalid sort_by." });
+    }
+  }
+
+  return db.query(queryStr, [article_id]).then((comments) => {
+    if (comments.rows.length === 0) {
+      return Promise.reject({
+        message: "This article hasn't received any comments.",
+      });
+    }
+
+    return comments.rows;
+  });
 };
