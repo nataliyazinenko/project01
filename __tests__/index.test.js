@@ -176,3 +176,4 @@ describe("/api/articles/:article_id/comments tests", () => {
 
 //to do:
 //error testing
+//sort by - check if it's the defoult order?

@@ -46,7 +46,7 @@
 
   "GET /api/articles/:article_id/comments": {
     "description": "get all comments for an article",
-    "queries": [],
+    "queries": ["sort_by"],
     "exampleResponse": [
       {
         "comment_id": 1,
