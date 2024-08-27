@@ -99,7 +99,6 @@ describe("/api/articles tests", () => {
       .expect(200)
       .then((response) => {
         response.body.articles.forEach((article) => {
-          console.log("article", article);
           expect(article).toHaveProperty("author");
           expect(article).toHaveProperty("title");
           expect(article).toHaveProperty("article_id");
@@ -122,6 +121,16 @@ describe("/api/articles tests", () => {
         expect(response.body.articles[0].comment_count).toBe(2);
       });
   });
+  // test("200: accepts a created_at query and sorts the articles by date in descending order.", () => {
+  //   return request(app)
+  //     .get("/api/articles")
+  //     .expect(200)
+  //     .then((response) => {
+  //       expect(response.body.articles).toBeSortedBy("created_at", {
+  //         descending: true,
+  //       });
+  //     });
+  // });
   test("404: incorrect endpoint", () => {
     return request(app).get("/api/articules").expect(404);
   });
@@ -134,16 +143,3 @@ describe("/api/articles tests", () => {
       });
   });
 });
-
-//WIP
-//   test("200: accepts a created_at query and sorts the articles by date in descending order.", () => {
-//     return request(app)
-//       .get("/api/articles")
-//       .expect(200)
-//       .then((response) => {
-//         expect(response.body.articles).toBeSortedBy("created_at", {
-//           descending: true,
-//         });
-//       });
-//   });
-// });
