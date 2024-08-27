@@ -36,7 +36,7 @@ describe("/api tests", () => {
       });
   });
 });
-describe("/api/articles/:article_id tests", () => {
+describe.only("/api/articles/:article_id tests", () => {
   test("200: sends a single article to the client", () => {
     return request(app)
       .get("/api/articles/1")
@@ -45,6 +45,7 @@ describe("/api/articles/:article_id tests", () => {
         expect(response.body.article.article_id).toBe(1);
         expect(response.body.article).toHaveProperty("author");
         expect(response.body.article).toHaveProperty("title");
+        expect(response.body.article).toHaveProperty("article_id");
         expect(response.body.article).toHaveProperty("body");
         expect(response.body.article).toHaveProperty("topic");
         expect(response.body.article).toHaveProperty("created_at");
