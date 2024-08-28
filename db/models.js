@@ -64,6 +64,7 @@ exports.leaveAComment = (article_id, { body, username }) => {
       [body, article_id, username]
     )
     .then((result) => {
+      console.log(result.rows);
       return result.rows[0];
     });
 };
