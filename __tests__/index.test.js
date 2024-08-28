@@ -36,6 +36,7 @@ describe("/api tests", () => {
       });
   });
 });
+
 describe("/api/articles/:article_id tests", () => {
   test("200: sends a single article to the client", () => {
     return request(app)
@@ -137,6 +138,7 @@ describe("/api/articles tests", () => {
       });
   });
 });
+
 describe("GET: /api/articles/:article_id/comments tests", () => {
   test("200: get all comments for an article, sorted by date in descendng order", () => {
     return request(app)
@@ -201,6 +203,7 @@ describe("GET: /api/articles/:article_id/comments tests", () => {
       });
   });
 });
+
 describe("POST:/ api/articles/:article_id/comments tests", () => {
   test("201: posts a new comment for an article", () => {
     const newComment = {
@@ -217,8 +220,7 @@ describe("POST:/ api/articles/:article_id/comments tests", () => {
         expect(response.body.comment.article_id).toBe(9);
       });
   });
-
-  test("400: provided non-existent username", () => {
+  test("400: non-existent username", () => {
     const newComment = {
       username: "notauser",
       body: "yes, it's a comment",
@@ -228,7 +230,6 @@ describe("POST:/ api/articles/:article_id/comments tests", () => {
       .send(newComment)
       .expect(400)
       .then((response) => {
-        // console.log(response.body);
         expect(response.body.message).toBe("User not found.");
       });
   });
@@ -245,30 +246,41 @@ describe("POST:/ api/articles/:article_id/comments tests", () => {
         expect(response.body.message).toBe("Bad request.");
       });
   });
-  // test("400: valid but non-existent article_id", () => {
-  //   const newComment = {
-  //     username: "rogersop",
-  //     body: "yes, it's a comment",
-  //   };
-  //   return request(app)
-  //     .post("/api/articles/101010101/comments")
-  //     .send(newComment)
-  //     .expect(400)
-  //     .then((response) => {
-  //       expect(response.body.message).toBe("Bad request???");
-  //     });
-  // });
+  test("400: comment body not provided", () => {
+    const newComment = {
+      username: "rogersop",
+    };
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Comment body missing.");
+      });
+  });
+  test("400: username not provided", () => {
+    const newComment = {
+      body: "yes, it's a comment",
+    };
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Username missing.");
+      });
+  });
+  test("400: valid but non-existent article_id", () => {
+    const newComment = {
+      username: "rogersop",
+      body: "yes, it's a comment",
+    };
+    return request(app)
+      .post("/api/articles/101010101/comments")
+      .send(newComment)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Article id is not present.");
+      });
+  });
 });
-
-//if (body === null)
-// return Promise.reject({ msg: "Comment body is empty" });
-//if (article.rows.length === 0) {
-// return Promise.reject({ msg: "article does not exist" });
-// }
-
-//to do:
-//DONE non-existent username
-//invalid id
-//valid but non-existent article id
-//comment body not provided
-//username not provided

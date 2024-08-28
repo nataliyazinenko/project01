@@ -58,6 +58,18 @@ exports.fetchArticleComments = (article_id, sort_by = "created_at") => {
 };
 
 exports.leaveAComment = (article_id, { body, username }) => {
+  if (!body) {
+    return Promise.reject({
+      status: 400,
+      message: "Comment body missing.",
+    });
+  }
+  if (!username) {
+    return Promise.reject({
+      status: 400,
+      message: "Username missing.",
+    });
+  }
   return db
     .query(`SELECT * FROM users WHERE username = $1;`, [username])
     .then((result) => {

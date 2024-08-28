@@ -54,9 +54,26 @@ app.use((err, req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  console.log(err);
   if (err.message === "User not found.") {
     res.status(400).send(err);
+  } else next(err);
+});
+
+app.use((err, req, res, next) => {
+  if (err.message === "Comment body missing.") {
+    res.status(400).send(err);
+  } else next(err);
+});
+
+app.use((err, req, res, next) => {
+  if (err.message === "Username missing.") {
+    res.status(400).send(err);
+  } else next(err);
+});
+
+app.use((err, req, res, next) => {
+  if (err.code === "23503") {
+    res.status(400).send({ message: "Article id is not present." });
   } else next(err);
 });
 
