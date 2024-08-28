@@ -48,10 +48,10 @@ exports.fetchArticleComments = (article_id, sort_by = "created_at") => {
     .then((comments) => {
       if (comments.rows.length === 0) {
         return Promise.reject({
-          message: "This article hasn't received any comments.",
+          message:
+            "This article hasn't received any comments or doesn't exist.",
         });
       }
-      console.log(comments.rows);
       return comments.rows;
     });
 };

@@ -41,4 +41,13 @@ app.use((err, req, res, next) => {
   } else next(err);
 });
 
+app.use((err, req, res, next) => {
+  if (
+    err.message ===
+    "This article hasn't received any comments or doesn't exist."
+  ) {
+    res.status(404).send(err);
+  } else next(err);
+});
+
 module.exports = app;

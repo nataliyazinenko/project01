@@ -169,13 +169,36 @@ describe("/api/articles/:article_id/comments tests", () => {
       .get("/api/articles/9/comments?sort_by=created_at")
       .expect(200)
       .then((response) => {
-        console.log(response.body.comments);
         expect(response.body.comments).toBeSortedBy("created_at", {
           descending: true,
         });
       });
   });
+  test("400: invalid sort_by query", () => {
+    return request(app)
+      .get("/api/articles/9/comments?sort_by=hello")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Invalid sort_by.");
+      });
+  });
+  test("404: valid article_id but this article doesn't have any comments", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.message).toBe(
+          "This article hasn't received any comments or doesn't exist."
+        );
+      });
+  });
+  test("400: invalid article_id", () => {
+    return request(app)
+      .get("/api/articles/nine/comments")
+      .expect(400)
+      .then((response) => {
+        console.log(response.body.message);
+        expect(response.body.message).toBe("Bad request.");
+      });
+  });
 });
-
-//to do:
-//error testing
