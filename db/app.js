@@ -4,6 +4,7 @@ const {
   getEndpointsDocumentation,
   getAllArticles,
   getArticleById,
+  getArticleComments,
 } = require("./controllers");
 
 const app = express();
@@ -17,6 +18,8 @@ app.get("/api/topics", getAllTopics);
 app.get("/api/articles", getAllArticles);
 
 app.get("/api/articles/:article_id", getArticleById);
+
+app.get("/api/articles/:article_id/comments", getArticleComments);
 
 app.use((err, req, res, next) => {
   if (err.code === "22P02") {
@@ -35,6 +38,15 @@ app.use((err, req, res, next) => {
 app.use((err, req, res, next) => {
   if (err.message === "Invalid sort_by.") {
     res.status(400).send(err);
+  } else next(err);
+});
+
+app.use((err, req, res, next) => {
+  if (
+    err.message ===
+    "This article hasn't received any comments or doesn't exist."
+  ) {
+    res.status(404).send(err);
   } else next(err);
 });
 
