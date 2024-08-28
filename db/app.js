@@ -53,4 +53,11 @@ app.use((err, req, res, next) => {
   } else next(err);
 });
 
+app.use((err, req, res, next) => {
+  console.log(err);
+  if (err.message === "User not found.") {
+    res.status(400).send(err);
+  } else next(err);
+});
+
 module.exports = app;

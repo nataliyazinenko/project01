@@ -59,12 +59,18 @@ exports.fetchArticleComments = (article_id, sort_by = "created_at") => {
 
 exports.leaveAComment = (article_id, { body, username }) => {
   return db
-    .query(
-      `INSERT INTO comments (body, article_id, author, votes, created_at) VALUES ($1, $2, $3, 0, NOW()) RETURNING *`,
-      [body, article_id, username]
-    )
+    .query(`SELECT * FROM users WHERE username = $1;`, [username])
     .then((result) => {
-      console.log(result.rows);
-      return result.rows[0];
+      if (result.rows.length === 0) {
+        return Promise.reject({ status: 400, message: "User not found." });
+      }
+      return db
+        .query(
+          `INSERT INTO comments (body, article_id, author, votes, created_at) VALUES ($1, $2, $3, 0, NOW()) RETURNING *`,
+          [body, article_id, username]
+        )
+        .then((result) => {
+          return result.rows[0];
+        });
     });
 };

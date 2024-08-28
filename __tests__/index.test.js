@@ -197,7 +197,6 @@ describe("GET: /api/articles/:article_id/comments tests", () => {
       .get("/api/articles/nine/comments")
       .expect(400)
       .then((response) => {
-        console.log(response.body.message);
         expect(response.body.message).toBe("Bad request.");
       });
   });
@@ -218,4 +217,58 @@ describe("POST:/ api/articles/:article_id/comments tests", () => {
         expect(response.body.comment.article_id).toBe(9);
       });
   });
+
+  test("400: provided non-existent username", () => {
+    const newComment = {
+      username: "notauser",
+      body: "yes, it's a comment",
+    };
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(400)
+      .then((response) => {
+        // console.log(response.body);
+        expect(response.body.message).toBe("User not found.");
+      });
+  });
+  test("400: invalid article_id", () => {
+    const newComment = {
+      username: "rogersop",
+      body: "yes, it's a comment",
+    };
+    return request(app)
+      .post("/api/articles/two/comments")
+      .send(newComment)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Bad request.");
+      });
+  });
+  // test("400: valid but non-existent article_id", () => {
+  //   const newComment = {
+  //     username: "rogersop",
+  //     body: "yes, it's a comment",
+  //   };
+  //   return request(app)
+  //     .post("/api/articles/101010101/comments")
+  //     .send(newComment)
+  //     .expect(400)
+  //     .then((response) => {
+  //       expect(response.body.message).toBe("Bad request???");
+  //     });
+  // });
 });
+
+//if (body === null)
+// return Promise.reject({ msg: "Comment body is empty" });
+//if (article.rows.length === 0) {
+// return Promise.reject({ msg: "article does not exist" });
+// }
+
+//to do:
+//DONE non-existent username
+//invalid id
+//valid but non-existent article id
+//comment body not provided
+//username not provided
