@@ -80,11 +80,12 @@ describe("/api/articles/:article_id tests", () => {
 });
 
 describe("/api/articles tests", () => {
-  test("200: sends an array of articles to the client", () => {
+  test("200: sends an array of articles, sorted by date in descendig order by default", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
       .then((response) => {
+        expect(response.body.articles).toBeSorted({ descending: true });
         expect(response.body.articles.length).toBe(13);
         expect(Array.isArray(response.body.articles)).toBeTruthy();
       });
@@ -137,11 +138,12 @@ describe("/api/articles tests", () => {
   });
 });
 describe("/api/articles/:article_id/comments tests", () => {
-  test("200: get all comments for an article", () => {
+  test("200: get all comments for an article, sorted by date in descendng order", () => {
     return request(app)
       .get("/api/articles/9/comments")
       .expect(200)
       .then((response) => {
+        expect(response.body.comments).toBeSorted({ descending: true });
         expect(response.body.comments).toMatchObject([
           {
             comment_id: 1,
@@ -167,6 +169,7 @@ describe("/api/articles/:article_id/comments tests", () => {
       .get("/api/articles/9/comments?sort_by=created_at")
       .expect(200)
       .then((response) => {
+        console.log(response.body.comments);
         expect(response.body.comments).toBeSortedBy("created_at", {
           descending: true,
         });
@@ -176,4 +179,3 @@ describe("/api/articles/:article_id/comments tests", () => {
 
 //to do:
 //error testing
-//sort by - check if it's the defoult order?
