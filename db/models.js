@@ -88,6 +88,19 @@ exports.leaveAComment = (article_id, { body, username }) => {
 };
 
 exports.updateArticle = (article_id, { inc_votes: newVote }) => {
+  if (isNaN(newVote)) {
+    return Promise.reject({
+      status: 400,
+      message: "inc_votes is not a number",
+    });
+  }
+  if (!Number.isInteger(newVote)) {
+    return Promise.reject({
+      status: 400,
+      message: "inc_votes is not an integer",
+    });
+  }
+
   return db
     .query(
       "UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;",
@@ -95,7 +108,7 @@ exports.updateArticle = (article_id, { inc_votes: newVote }) => {
     )
     .then((updatedArticle) => {
       if (updatedArticle.rows.length === 0) {
-        return Promise.reject({ msg: "article does not exist" });
+        return Promise.reject({ message: "Article not found." });
       }
       return updatedArticle.rows[0];
     });

@@ -80,4 +80,23 @@ app.use((err, req, res, next) => {
   } else next(err);
 });
 
+app.use((err, req, res, next) => {
+  if (err.message === "inc_votes is not a number") {
+    res.status(400).send(err);
+  } else next(err);
+});
+
+app.use((err, req, res, next) => {
+  if (err.message === "inc_votes is not an integer") {
+    res.status(400).send(err);
+  } else next(err);
+});
+
+app.use((err, req, res, next) => {
+  console.log(err);
+  if (err.message === "Article not found.") {
+    res.status(404).send(err);
+  } else next(err);
+});
+
 module.exports = app;
