@@ -6,6 +6,7 @@ const {
   leaveAComment,
   updateArticle,
   deleteComment,
+  fetchUsers,
 } = require("./models");
 const fs = require("fs/promises");
 
@@ -89,4 +90,14 @@ exports.deleteCommentById = (req, res, next) => {
       res.status(204).send();
     })
     .catch((err) => next(err));
+};
+
+exports.getAllUsers = (req, res, next) => {
+  fetchUsers()
+    .then((users) => {
+      res.status(200).send({ users });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };

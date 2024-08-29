@@ -124,3 +124,10 @@ exports.deleteComment = (comment_id) => {
       return result;
     });
 };
+
+exports.fetchUsers = () => {
+  return db.query("SELECT * FROM users").then((users) => {
+    console.log("USERS", users.rows);
+    return users.rows;
+  });
+};
