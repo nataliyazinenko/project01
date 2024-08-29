@@ -215,6 +215,7 @@ describe("POST:/api/articles/:article_id/comments tests", () => {
       .send(newComment)
       .expect(201)
       .then((response) => {
+        console.log("RES", response.body);
         expect(response.body.comment.author).toBe("rogersop");
         expect(response.body.comment.body).toBe("yes, it's a comment");
         expect(response.body.comment.article_id).toBe(9);
