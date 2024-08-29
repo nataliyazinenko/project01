@@ -116,12 +116,12 @@ describe("/api/articles tests", () => {
         expect(response.body.articles[0].comment_count).toBe(2);
       });
   });
-  test("200: accepts a created_at query and sorts the articles by date in descending order.", () => {
+  test("200: accepts a sort_by query.", () => {
     return request(app)
-      .get("/api/articles?sort_by=created_at")
+      .get("/api/articles?sort_by=topic")
       .expect(200)
       .then((response) => {
-        expect(response.body.articles).toBeSortedBy("created_at", {
+        expect(response.body.articles).toBeSortedBy("topic", {
           descending: true,
         });
       });
@@ -140,7 +140,7 @@ describe("/api/articles tests", () => {
 });
 
 describe("GET:/api/articles/:article_id/comments tests", () => {
-  test("200: get all comments for an article, sorted by date in descendng order", () => {
+  test("200: get all comments for an article, sorted by date in descendng order by default", () => {
     return request(app)
       .get("/api/articles/9/comments")
       .expect(200)
@@ -166,7 +166,7 @@ describe("GET:/api/articles/:article_id/comments tests", () => {
         ]);
       });
   });
-  test("200: accepts a created_at query and sorts the comments by date in descending order.", () => {
+  test("200: accepts a sort_by query parameter", () => {
     return request(app)
       .get("/api/articles/9/comments?sort_by=created_at")
       .expect(200)
@@ -384,3 +384,8 @@ describe("GET: /api/users", () => {
     return request(app).get("/api/unknownendpoint").expect(404);
   });
 });
+
+//to do:
+//accepts order query parameter
+//invalid order query ("ascending")
+//invalid query parameter? ("sort")
