@@ -73,7 +73,10 @@ exports.addComment = (req, res, next) => {
 
 exports.updateArticleById = (req, res, next) => {
   const { article_id } = req.params;
-  updateArticle(article_id).then((updatedArticle) => {
-    res.status(200).send({ updatedArticle });
-  });
+  const { inc_votes } = req.body;
+  updateArticle(article_id, { inc_votes })
+    .then((updatedArticle) => {
+      res.status(200).send({ updatedArticle });
+    })
+    .catch((err) => next(err));
 };

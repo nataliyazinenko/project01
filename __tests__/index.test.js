@@ -204,7 +204,7 @@ describe("GET: /api/articles/:article_id/comments tests", () => {
   });
 });
 
-describe("POST:/ api/articles/:article_id/comments tests", () => {
+describe("POST:/api/articles/:article_id/comments tests", () => {
   test("201: posts a new comment for an article", () => {
     const newComment = {
       username: "rogersop",
@@ -281,6 +281,29 @@ describe("POST:/ api/articles/:article_id/comments tests", () => {
       .expect(400)
       .then((response) => {
         expect(response.body.message).toBe("Article id is not present.");
+      });
+  });
+});
+
+describe("PATCH: /api/articles/:article_id tests", () => {
+  test("200: updates article votes", () => {
+    const update1 = { inc_votes: 10 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(update1)
+      .expect(200)
+      .then((response) => {
+        expect(response.body.updatedArticle.votes).toBe(110);
+      });
+  });
+  test("200: updates article votes", () => {
+    const update1 = { inc_votes: -20 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(update1)
+      .expect(200)
+      .then((response) => {
+        expect(response.body.updatedArticle.votes).toBe(80);
       });
   });
 });
