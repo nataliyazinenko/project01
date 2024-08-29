@@ -113,3 +113,14 @@ exports.updateArticle = (article_id, { inc_votes: newVote }) => {
       return updatedArticle.rows[0];
     });
 };
+
+exports.deleteComment = (comment_id) => {
+  return db
+    .query("DELETE FROM comments WHERE comment_id = $1", [comment_id])
+    .then((result) => {
+      if (result.rowCount === 0) {
+        return Promise.reject({ message: "Comment not found." });
+      }
+      return result;
+    });
+};

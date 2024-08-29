@@ -139,7 +139,7 @@ describe("/api/articles tests", () => {
   });
 });
 
-describe("GET: /api/articles/:article_id/comments tests", () => {
+describe("GET:/api/articles/:article_id/comments tests", () => {
   test("200: get all comments for an article, sorted by date in descendng order", () => {
     return request(app)
       .get("/api/articles/9/comments")
@@ -215,7 +215,6 @@ describe("POST:/api/articles/:article_id/comments tests", () => {
       .send(newComment)
       .expect(201)
       .then((response) => {
-        console.log("RES", response.body);
         expect(response.body.comment.author).toBe("rogersop");
         expect(response.body.comment.body).toBe("yes, it's a comment");
         expect(response.body.comment.article_id).toBe(9);
@@ -286,7 +285,7 @@ describe("POST:/api/articles/:article_id/comments tests", () => {
   });
 });
 
-describe("PATCH: /api/articles/:article_id tests", () => {
+describe("PATCH:/api/articles/:article_id tests", () => {
   test("200: updates article votes (increments)", () => {
     const update = { inc_votes: 10 };
     return request(app)
@@ -335,6 +334,34 @@ describe("PATCH: /api/articles/:article_id tests", () => {
       .expect(404)
       .then((response) => {
         expect(response.body.message).toBe("Article not found.");
+      });
+  });
+});
+
+describe("DELETE:/api/comments/:comment_id", () => {
+  test("204: deletes the comment by comment_id", () => {
+    return request(app)
+      .delete("/api/comments/1")
+      .expect(204)
+      .then((response) => {
+        expect(response.body).toEqual({});
+        expect(response.res.statusMessage).toBe("No Content");
+      });
+  });
+  test("400: invalid comment id", () => {
+    return request(app)
+      .delete("/api/comments/one")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Bad request.");
+      });
+  });
+  test("404: valid but non-existent comment id", () => {
+    return request(app)
+      .delete("/api/comments/1111111")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.message).toBe("Comment not found.");
       });
   });
 });
