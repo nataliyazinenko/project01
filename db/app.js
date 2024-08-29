@@ -6,6 +6,7 @@ const {
   getArticleById,
   getArticleComments,
   addComment,
+  updateArticleById,
 } = require("./controllers");
 
 const app = express();
@@ -23,6 +24,8 @@ app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/articles/:article_id/comments", getArticleComments);
 
 app.post("/api/articles/:article_id/comments", addComment);
+
+app.patch("/api/articles/:article_id", updateArticleById);
 
 app.use((err, req, res, next) => {
   if (err.code === "22P02") {
@@ -74,6 +77,25 @@ app.use((err, req, res, next) => {
 app.use((err, req, res, next) => {
   if (err.code === "23503") {
     res.status(400).send({ message: "Article id is not present." });
+  } else next(err);
+});
+
+app.use((err, req, res, next) => {
+  if (err.message === "inc_votes is not a number") {
+    res.status(400).send(err);
+  } else next(err);
+});
+
+app.use((err, req, res, next) => {
+  if (err.message === "inc_votes is not an integer") {
+    res.status(400).send(err);
+  } else next(err);
+});
+
+app.use((err, req, res, next) => {
+  console.log(err);
+  if (err.message === "Article not found.") {
+    res.status(404).send(err);
   } else next(err);
 });
 

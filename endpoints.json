@@ -62,15 +62,31 @@
   "POST /api/articles/:article_id/comments": {
     "description": "adds a comment for an article",
     "queries": [],
-    "exampleResponse": [
-      {
+    "exampleResponse": {
+      "comment": {
         "comment_id": 19,
         "body": "yes, it's a comment",
         "article_id": 9,
         "author": "rogersop",
         "votes": 0,
-        "created_at": "2024-08-28T13:15:30.920Z"
+        "created_at": "2024-08-29T14:26:14.652Z"
       }
-    ]
+    }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "update an article by article_id",
+    "queries": [],
+    "exampleResponse": {
+      "updatedArticle": {
+        "article_id": 1,
+        "title": "Living in the shadow of a great man",
+        "topic": "mitch",
+        "author": "butter_bridge",
+        "body": "I find this existence challenging",
+        "created_at": "2020-07-09T20:11:00.000Z",
+        "votes": 80,
+        "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+      }
+    }
   }
 }

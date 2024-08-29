@@ -204,7 +204,7 @@ describe("GET: /api/articles/:article_id/comments tests", () => {
   });
 });
 
-describe("POST:/ api/articles/:article_id/comments tests", () => {
+describe("POST:/api/articles/:article_id/comments tests", () => {
   test("201: posts a new comment for an article", () => {
     const newComment = {
       username: "rogersop",
@@ -215,6 +215,7 @@ describe("POST:/ api/articles/:article_id/comments tests", () => {
       .send(newComment)
       .expect(201)
       .then((response) => {
+        console.log("RES", response.body);
         expect(response.body.comment.author).toBe("rogersop");
         expect(response.body.comment.body).toBe("yes, it's a comment");
         expect(response.body.comment.article_id).toBe(9);
@@ -281,6 +282,59 @@ describe("POST:/ api/articles/:article_id/comments tests", () => {
       .expect(400)
       .then((response) => {
         expect(response.body.message).toBe("Article id is not present.");
+      });
+  });
+});
+
+describe("PATCH: /api/articles/:article_id tests", () => {
+  test("200: updates article votes (increments)", () => {
+    const update = { inc_votes: 10 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(update)
+      .expect(200)
+      .then((response) => {
+        expect(response.body.updatedArticle.votes).toBe(110);
+      });
+  });
+  test("200: updates article votes (decrements)", () => {
+    const update = { inc_votes: -20 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(update)
+      .expect(200)
+      .then((response) => {
+        expect(response.body.updatedArticle.votes).toBe(80);
+      });
+  });
+  test("400: inc_votes is not a number", () => {
+    const update = { inc_votes: "ten" };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(update)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("inc_votes is not a number");
+      });
+  });
+  test("400: inc_votes is not an integer", () => {
+    const update = { inc_votes: 5.5 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(update)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("inc_votes is not an integer");
+      });
+  });
+  test("404: valid but non-existent article_id (article doesn't exist)", () => {
+    const update = { inc_votes: 10 };
+    return request(app)
+      .patch("/api/articles/1111")
+      .send(update)
+      .expect(404)
+      .then((response) => {
+        expect(response.body.message).toBe("Article not found.");
       });
   });
 });
