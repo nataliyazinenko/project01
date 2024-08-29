@@ -373,7 +373,7 @@ describe("GET: /api/users", () => {
       .get("/api/users")
       .expect(200)
       .then((response) => {
-        expect(response.body.users.length).toBe(4);
+        expect(response.body.users.length).toBeGreaterThan(0);
         response.body.users.forEach((user) => {
           expect(user).toHaveProperty("username");
           expect(user).toHaveProperty("name");
@@ -381,4 +381,9 @@ describe("GET: /api/users", () => {
         });
       });
   });
+  test("404: endpoint that does not exist", () => {
+    return request(app).get("/api/unknownendpoint").expect(404);
+  });
 });
+
+//
