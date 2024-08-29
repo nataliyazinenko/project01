@@ -5,6 +5,7 @@ const {
   getAllArticles,
   getArticleById,
   getArticleComments,
+  addComment,
 } = require("./controllers");
 
 const app = express();
@@ -20,6 +21,8 @@ app.get("/api/articles", getAllArticles);
 app.get("/api/articles/:article_id", getArticleById);
 
 app.get("/api/articles/:article_id/comments", getArticleComments);
+
+app.post("/api/articles/:article_id/comments", addComment);
 
 app.use((err, req, res, next) => {
   if (err.code === "22P02") {
@@ -47,6 +50,30 @@ app.use((err, req, res, next) => {
     "This article hasn't received any comments or doesn't exist."
   ) {
     res.status(404).send(err);
+  } else next(err);
+});
+
+app.use((err, req, res, next) => {
+  if (err.message === "User not found.") {
+    res.status(400).send(err);
+  } else next(err);
+});
+
+app.use((err, req, res, next) => {
+  if (err.message === "Comment body missing.") {
+    res.status(400).send(err);
+  } else next(err);
+});
+
+app.use((err, req, res, next) => {
+  if (err.message === "Username missing.") {
+    res.status(400).send(err);
+  } else next(err);
+});
+
+app.use((err, req, res, next) => {
+  if (err.code === "23503") {
+    res.status(400).send({ message: "Article id is not present." });
   } else next(err);
 });
 

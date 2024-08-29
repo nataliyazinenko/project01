@@ -3,6 +3,7 @@ const {
   fetchArticleById,
   fetchArticles,
   fetchArticleComments,
+  leaveAComment,
 } = require("./models");
 const fs = require("fs/promises");
 
@@ -55,6 +56,16 @@ exports.getArticleComments = (req, res, next) => {
   fetchArticleComments(article_id, sort_by)
     .then((comments) => {
       res.status(200).send({ comments });
+    })
+    .catch((err) => next(err));
+};
+
+exports.addComment = (req, res, next) => {
+  const { article_id } = req.params;
+  const newComment = req.body;
+  leaveAComment(article_id, newComment)
+    .then((comment) => {
+      res.status(201).send({ comment });
     })
     .catch((err) => next(err));
 };
