@@ -344,7 +344,6 @@ describe("DELETE:/api/comments/:comment_id", () => {
       .delete("/api/comments/1")
       .expect(204)
       .then((response) => {
-        console.log(response);
         expect(response.body).toEqual({});
         expect(response.res.statusMessage).toBe("No Content");
       });
@@ -373,6 +372,7 @@ describe("GET: /api/users", () => {
       .get("/api/users")
       .expect(200)
       .then((response) => {
+        console.log(response.body);
         expect(response.body.users.length).toBeGreaterThan(0);
         response.body.users.forEach((user) => {
           expect(user).toHaveProperty("username");
