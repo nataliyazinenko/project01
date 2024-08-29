@@ -7,6 +7,7 @@ const {
   getArticleComments,
   addComment,
   updateArticleById,
+  deleteCommentById,
 } = require("./controllers");
 
 const app = express();
@@ -26,6 +27,8 @@ app.get("/api/articles/:article_id/comments", getArticleComments);
 app.post("/api/articles/:article_id/comments", addComment);
 
 app.patch("/api/articles/:article_id", updateArticleById);
+
+app.delete("/api/comments/:comment_id", deleteCommentById);
 
 app.use((err, req, res, next) => {
   if (err.code === "22P02") {
@@ -93,8 +96,13 @@ app.use((err, req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  console.log(err);
   if (err.message === "Article not found.") {
+    res.status(404).send(err);
+  } else next(err);
+});
+
+app.use((err, req, res, next) => {
+  if (err.message === "Comment not found.") {
     res.status(404).send(err);
   } else next(err);
 });

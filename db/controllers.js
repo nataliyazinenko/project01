@@ -5,6 +5,7 @@ const {
   fetchArticleComments,
   leaveAComment,
   updateArticle,
+  deleteComment,
 } = require("./models");
 const fs = require("fs/promises");
 
@@ -77,6 +78,15 @@ exports.updateArticleById = (req, res, next) => {
   updateArticle(article_id, { inc_votes })
     .then((updatedArticle) => {
       res.status(200).send({ updatedArticle });
+    })
+    .catch((err) => next(err));
+};
+
+exports.deleteCommentById = (req, res, next) => {
+  const { comment_id } = req.params;
+  deleteComment(comment_id)
+    .then(() => {
+      res.status(204).send();
     })
     .catch((err) => next(err));
 };
