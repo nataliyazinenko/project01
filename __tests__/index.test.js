@@ -344,6 +344,7 @@ describe("DELETE:/api/comments/:comment_id", () => {
       .delete("/api/comments/1")
       .expect(204)
       .then((response) => {
+        console.log(response);
         expect(response.body).toEqual({});
         expect(response.res.statusMessage).toBe("No Content");
       });
