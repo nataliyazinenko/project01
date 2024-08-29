@@ -116,7 +116,7 @@ describe("/api/articles tests", () => {
         expect(response.body.articles[0].comment_count).toBe(2);
       });
   });
-  test("200: accepts a sort_by query.", () => {
+  test("200: accepts a sort_by query parameter.", () => {
     return request(app)
       .get("/api/articles?sort_by=topic")
       .expect(200)
@@ -137,6 +137,30 @@ describe("/api/articles tests", () => {
         expect(response.body.message).toBe("Invalid sort_by.");
       });
   });
+  test("200: accepts an order query parameter.", () => {
+    return request(app)
+      .get("/api/articles?order=ASC")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles).toBeSorted();
+      });
+  });
+  test("400: invalid order query", () => {
+    return request(app)
+      .get("/api/articles?order=ascending")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Invalid order query.");
+      });
+  });
+  // test("400: invalid query parameter", () => {
+  //   return request(app)
+  //     .get("/api/articles?sort=ASC")
+  //     .expect(400)
+  //     .then((response) => {
+  //       expect(response.body.message).toBe("Invalid query parameter.");
+  //     });
+  // });
 });
 
 describe("GET:/api/articles/:article_id/comments tests", () => {
@@ -386,6 +410,5 @@ describe("GET: /api/users", () => {
 });
 
 //to do:
-//accepts order query parameter
-//invalid order query ("ascending")
+
 //invalid query parameter? ("sort")
