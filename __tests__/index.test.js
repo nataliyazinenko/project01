@@ -372,7 +372,6 @@ describe("GET: /api/users", () => {
       .get("/api/users")
       .expect(200)
       .then((response) => {
-        console.log(response.body);
         expect(response.body.users.length).toBeGreaterThan(0);
         response.body.users.forEach((user) => {
           expect(user).toHaveProperty("username");
@@ -385,5 +384,3 @@ describe("GET: /api/users", () => {
     return request(app).get("/api/unknownendpoint").expect(404);
   });
 });
-
-//
