@@ -344,7 +344,6 @@ describe("DELETE:/api/comments/:comment_id", () => {
       .delete("/api/comments/1")
       .expect(204)
       .then((response) => {
-        console.log(response);
         expect(response.body).toEqual({});
         expect(response.res.statusMessage).toBe("No Content");
       });
@@ -364,5 +363,24 @@ describe("DELETE:/api/comments/:comment_id", () => {
       .then((response) => {
         expect(response.body.message).toBe("Comment not found.");
       });
+  });
+});
+
+describe("GET: /api/users", () => {
+  test("200: sends an array of users", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.users.length).toBeGreaterThan(0);
+        response.body.users.forEach((user) => {
+          expect(user).toHaveProperty("username");
+          expect(user).toHaveProperty("name");
+          expect(user).toHaveProperty("avatar_url");
+        });
+      });
+  });
+  test("404: endpoint that does not exist", () => {
+    return request(app).get("/api/unknownendpoint").expect(404);
   });
 });
