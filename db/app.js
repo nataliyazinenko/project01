@@ -119,7 +119,7 @@ app.use((err, req, res, next) => {
 app.use((err, req, res, next) => {
   console.log("ERR", err);
   if (err.message === "Invalid query parameter.") {
-    res.status(400).send(err);
+    res.status(400).send("ERR", err);
   } else next(err);
 });
 

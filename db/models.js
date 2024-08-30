@@ -7,10 +7,23 @@ exports.fetchTopics = () => {
   });
 };
 
-exports.fetchArticles = (sort_by = "created_at", order = "DESC") => {
+exports.fetchArticles = (
+  sort_by = "created_at",
+  order = "DESC",
+  queryParameters = {}
+) => {
   const sortableColumns = ["title", "topic", "author", "created_at", "votes"];
   const inOrder = ["ASC", "DESC"];
+  const validQueryParameters = ["sort_by", "order"];
 
+  for (const queryParameter in queryParameters) {
+    if (!validQueryParameters.includes(queryParameter)) {
+      return Promise.reject({
+        status: 400,
+        message: "Invalid query parameter.",
+      });
+    }
+  }
   if (!sortableColumns.includes(sort_by)) {
     return Promise.reject({ status: 400, message: "Invalid sort_by." });
   }
