@@ -54,6 +54,12 @@ app.use((err, req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
+  if (err.message === "Invalid order query.") {
+    res.status(400).send(err);
+  } else next(err);
+});
+
+app.use((err, req, res, next) => {
   if (
     err.message ===
     "This article hasn't received any comments or doesn't exist."
@@ -107,6 +113,12 @@ app.use((err, req, res, next) => {
 app.use((err, req, res, next) => {
   if (err.message === "Comment not found.") {
     res.status(404).send(err);
+  } else next(err);
+});
+
+app.use((err, req, res, next) => {
+  if (err.message === "Invalid query parameter.") {
+    res.status(400).send(err);
   } else next(err);
 });
 

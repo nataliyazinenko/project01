@@ -7,13 +7,32 @@ exports.fetchTopics = () => {
   });
 };
 
-exports.fetchArticles = (sort_by = "created_at") => {
-  const sortableColumns = ["created_at"];
+exports.fetchArticles = (
+  sort_by = "created_at",
+  order = "DESC",
+  queryParameters = {}
+) => {
+  const sortableColumns = ["title", "topic", "author", "created_at", "votes"];
+  const inOrder = ["ASC", "DESC"];
+  const validQueryParameters = ["sort_by", "order"];
+
+  for (const queryParameter in queryParameters) {
+    if (!validQueryParameters.includes(queryParameter)) {
+      return Promise.reject({
+        status: 400,
+        message: "Invalid query parameter.",
+      });
+    }
+  }
   if (!sortableColumns.includes(sort_by)) {
     return Promise.reject({ status: 400, message: "Invalid sort_by." });
   }
 
-  const queryStr = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, (SELECT COUNT (*) FROM comments WHERE comments.article_id = articles.article_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id GROUP BY articles.article_id ORDER BY ${sort_by} DESC`;
+  if (!inOrder.includes(order)) {
+    return Promise.reject({ status: 400, message: "Invalid order query." });
+  }
+
+  const queryStr = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, (SELECT COUNT (*) FROM comments WHERE comments.article_id = articles.article_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id GROUP BY articles.article_id ORDER BY ${sort_by} ${order}`;
 
   return db.query(queryStr).then((result) => {
     result.rows.forEach((article) => {

@@ -116,12 +116,12 @@ describe("/api/articles tests", () => {
         expect(response.body.articles[0].comment_count).toBe(2);
       });
   });
-  test("200: accepts a created_at query and sorts the articles by date in descending order.", () => {
+  test("200: accepts a sort_by query parameter.", () => {
     return request(app)
-      .get("/api/articles?sort_by=created_at")
+      .get("/api/articles?sort_by=topic")
       .expect(200)
       .then((response) => {
-        expect(response.body.articles).toBeSortedBy("created_at", {
+        expect(response.body.articles).toBeSortedBy("topic", {
           descending: true,
         });
       });
@@ -137,10 +137,42 @@ describe("/api/articles tests", () => {
         expect(response.body.message).toBe("Invalid sort_by.");
       });
   });
+  test("200: accepts an order query parameter.", () => {
+    return request(app)
+      .get("/api/articles?order=ASC")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles).toBeSorted();
+      });
+  });
+  test("400: invalid order query", () => {
+    return request(app)
+      .get("/api/articles?order=ascending")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Invalid order query.");
+      });
+  });
+  test("400: invalid query parameter", () => {
+    return request(app)
+      .get("/api/articles?sort=ASC")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Invalid query parameter.");
+      });
+  });
+  test("400: valid query parameter and invalid query parameter", () => {
+    return request(app)
+      .get("/api/articles?sort=ASC&sort_by=author")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Invalid query parameter.");
+      });
+  });
 });
 
 describe("GET:/api/articles/:article_id/comments tests", () => {
-  test("200: get all comments for an article, sorted by date in descendng order", () => {
+  test("200: get all comments for an article, sorted by date in descendng order by default", () => {
     return request(app)
       .get("/api/articles/9/comments")
       .expect(200)
@@ -166,7 +198,7 @@ describe("GET:/api/articles/:article_id/comments tests", () => {
         ]);
       });
   });
-  test("200: accepts a created_at query and sorts the comments by date in descending order.", () => {
+  test("200: accepts a sort_by query parameter", () => {
     return request(app)
       .get("/api/articles/9/comments?sort_by=created_at")
       .expect(200)
