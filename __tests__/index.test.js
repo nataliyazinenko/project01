@@ -153,14 +153,22 @@ describe("/api/articles tests", () => {
         expect(response.body.message).toBe("Invalid order query.");
       });
   });
-  // test("400: invalid query parameter", () => {
-  //   return request(app)
-  //     .get("/api/articles?sort=ASC")
-  //     .expect(400)
-  //     .then((response) => {
-  //       expect(response.body.message).toBe("Invalid query parameter.");
-  //     });
-  // });
+  test("400: invalid query parameter", () => {
+    return request(app)
+      .get("/api/articles?sort=ASC")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Invalid query parameter.");
+      });
+  });
+  test("400: valid query parameter and invalid query parameter", () => {
+    return request(app)
+      .get("/api/articles?sort=ASC&sort_by=author")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Invalid query parameter.");
+      });
+  });
 });
 
 describe("GET:/api/articles/:article_id/comments tests", () => {
@@ -408,7 +416,3 @@ describe("GET: /api/users", () => {
     return request(app).get("/api/unknownendpoint").expect(404);
   });
 });
-
-//to do:
-
-//invalid query parameter? ("sort")
