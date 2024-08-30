@@ -169,8 +169,35 @@ describe("/api/articles tests", () => {
         expect(response.body.message).toBe("Invalid query parameter.");
       });
   });
+  test("200: accepts a topic query parameter.", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles).toEqual([
+          {
+            author: "rogersop",
+            title: "UNCOVERED: catspiracy to bring down democracy",
+            article_id: 5,
+            topic: "cats",
+            created_at: "2020-08-03T13:14:00.000Z",
+            votes: 0,
+            article_img_url:
+              "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            comment_count: 2,
+          },
+        ]);
+      });
+  });
+  test("400: invalid topic query", () => {
+    return request(app)
+      .get("/api/articles?topic=notatopic")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.message).toBe("Topic not found.");
+      });
+  });
 });
-
 describe("GET:/api/articles/:article_id/comments tests", () => {
   test("200: get all comments for an article, sorted by date in descendng order by default", () => {
     return request(app)

@@ -122,4 +122,10 @@ app.use((err, req, res, next) => {
   } else next(err);
 });
 
+app.use((err, req, res, next) => {
+  if (err.message === "Topic not found.") {
+    res.status(404).send(err);
+  } else next(err);
+});
+
 module.exports = app;

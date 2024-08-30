@@ -10,11 +10,13 @@ exports.fetchTopics = () => {
 exports.fetchArticles = (
   sort_by = "created_at",
   order = "DESC",
+  topic,
   queryParameters = {}
 ) => {
   const sortableColumns = ["title", "topic", "author", "created_at", "votes"];
   const inOrder = ["ASC", "DESC"];
-  const validQueryParameters = ["sort_by", "order"];
+  const validQueryParameters = ["sort_by", "order", "topic"];
+  const queryVals = [];
 
   for (const queryParameter in queryParameters) {
     if (!validQueryParameters.includes(queryParameter)) {
@@ -24,6 +26,7 @@ exports.fetchArticles = (
       });
     }
   }
+
   if (!sortableColumns.includes(sort_by)) {
     return Promise.reject({ status: 400, message: "Invalid sort_by." });
   }
@@ -32,9 +35,21 @@ exports.fetchArticles = (
     return Promise.reject({ status: 400, message: "Invalid order query." });
   }
 
-  const queryStr = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, (SELECT COUNT (*) FROM comments WHERE comments.article_id = articles.article_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id GROUP BY articles.article_id ORDER BY ${sort_by} ${order}`;
+  let queryStr =
+    "SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, (SELECT COUNT (*) FROM comments WHERE comments.article_id = articles.article_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id";
 
-  return db.query(queryStr).then((result) => {
+  if (topic) {
+    queryStr += ` WHERE topic = $1`;
+    queryVals.push(topic);
+  }
+
+  queryStr += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order}`;
+
+  return db.query(queryStr, queryVals).then((result) => {
+    if (result.rows.length === 0) {
+      return Promise.reject({ status: 404, message: "Topic not found." });
+    }
+
     result.rows.forEach((article) => {
       article.comment_count = Number(article.comment_count);
     });
