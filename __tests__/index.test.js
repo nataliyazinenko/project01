@@ -52,6 +52,8 @@ describe("/api/articles/:article_id tests", () => {
         expect(response.body.article).toHaveProperty("created_at");
         expect(response.body.article).toHaveProperty("votes");
         expect(response.body.article).toHaveProperty("article_img_url");
+        expect(response.body.article).toHaveProperty("comment_count");
+        expect(response.body.article.comment_count).toBe(11);
       });
   });
 
@@ -63,7 +65,6 @@ describe("/api/articles/:article_id tests", () => {
         expect(response.body.message).toBe("Bad request.");
       });
   });
-
   test("404: responds with not found for valid but non-existent article id", () => {
     return request(app)
       .get("/api/articles/11111111111111111111111")
@@ -74,7 +75,6 @@ describe("/api/articles/:article_id tests", () => {
         );
       });
   });
-
   test("200: sends an array of all articles if article id is not specified", () => {
     return request(app).get("/api/articles/").expect(200);
   });
@@ -198,6 +198,7 @@ describe("/api/articles tests", () => {
       });
   });
 });
+
 describe("GET:/api/articles/:article_id/comments tests", () => {
   test("200: get all comments for an article, sorted by date in descendng order by default", () => {
     return request(app)

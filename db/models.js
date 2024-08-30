@@ -60,12 +60,19 @@ exports.fetchArticles = (
 
 exports.fetchArticleById = (article_id) => {
   return db
-    .query("SELECT * FROM articles WHERE article_id = $1;", [article_id])
+    .query(
+      "SELECT articles.author, articles.title, articles.article_id, articles.body, articles.topic, articles.created_at, articles.votes, articles.article_img_url, (SELECT COUNT (*) FROM comments WHERE comments.article_id = articles.article_id) AS comment_count FROM articles WHERE articles.article_id = $1",
+      [article_id]
+    )
     .then((article) => {
       if (article.rows.length === 0) {
         return Promise.reject({ msg: "article does not exist" });
       }
-      return article.rows[0];
+
+      const result = article.rows[0];
+      result.comment_count = Number(result.comment_count);
+
+      return result;
     });
 };
 
