@@ -36,14 +36,16 @@ app.get("/api/users", getAllUsers);
 app.use((err, req, res, next) => {
   if (err.code === "22P02") {
     res.status(400).send({ message: "Bad request." });
-  } else next(err);
-});
+  }
 
-app.use((err, req, res, next) => {
   if (err.code === "22003") {
     res
       .status(404)
       .send({ message: "The data with the given id was not found." });
+  }
+
+  if (err.code === "23503") {
+    res.status(400).send({ message: "Article id is not present." });
   } else next(err);
 });
 
@@ -56,15 +58,6 @@ app.use((err, req, res, next) => {
 app.use((err, req, res, next) => {
   if (err.message === "Invalid order query.") {
     res.status(400).send(err);
-  } else next(err);
-});
-
-app.use((err, req, res, next) => {
-  if (
-    err.message ===
-    "This article hasn't received any comments or doesn't exist."
-  ) {
-    res.status(404).send(err);
   } else next(err);
 });
 
@@ -83,12 +76,6 @@ app.use((err, req, res, next) => {
 app.use((err, req, res, next) => {
   if (err.message === "Username missing.") {
     res.status(400).send(err);
-  } else next(err);
-});
-
-app.use((err, req, res, next) => {
-  if (err.code === "23503") {
-    res.status(400).send({ message: "Article id is not present." });
   } else next(err);
 });
 

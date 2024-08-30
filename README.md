@@ -15,3 +15,8 @@ https://project01-wgzu.onrender.com/api
 ---
 
 This portfolio project was created as part of a Digital Skills Bootcamp in Software Engineering provided by [Northcoders](https://northcoders.com/)
+
+//to do:
+//refactor based on comments
+//update readme as per task
+//reseed??

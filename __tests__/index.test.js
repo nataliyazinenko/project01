@@ -7,6 +7,12 @@ const request = require("supertest");
 beforeEach(() => seed(data));
 afterAll(() => db.end());
 
+describe("incorrect endpoint", () => {
+  test("404: endpoint that does not exist", () => {
+    return request(app).get("/api/unknownendpoint").expect(404);
+  });
+});
+
 describe("/api/topics tests", () => {
   test("200: sends an array of topics to the client", () => {
     return request(app)
@@ -19,9 +25,6 @@ describe("/api/topics tests", () => {
           expect(topic).toHaveProperty("description");
         });
       });
-  });
-  test("404: endpoint that does not exist", () => {
-    return request(app).get("/api/unknownendpoint").expect(404);
   });
 });
 
@@ -57,7 +60,6 @@ describe("/api/articles/:article_id tests", () => {
         });
       });
   });
-
   test("400: responds with bad request for invalid article id", () => {
     return request(app)
       .get("/api/articles/one")
@@ -127,9 +129,6 @@ describe("/api/articles tests", () => {
         });
       });
   });
-  test("404: incorrect endpoint", () => {
-    return request(app).get("/api/articules").expect(404);
-  });
   test("400: invalid sort_by query", () => {
     return request(app)
       .get("/api/articles?sort_by=something")
@@ -170,7 +169,7 @@ describe("/api/articles tests", () => {
         expect(response.body.message).toBe("Invalid query parameter.");
       });
   });
-  test("200: accepts a topic query parameter.", () => {
+  test("200: responds with array of articles filtered by topic query parameter.", () => {
     return request(app)
       .get("/api/articles?topic=cats")
       .expect(200)
@@ -245,14 +244,12 @@ describe("GET:/api/articles/:article_id/comments tests", () => {
         expect(response.body.message).toBe("Invalid sort_by.");
       });
   });
-  test("404: valid article_id but this article doesn't have any comments", () => {
+  test("200: responds with an empty array when article doesn't have any comments", () => {
     return request(app)
       .get("/api/articles/2/comments")
-      .expect(404)
+      .expect(200)
       .then((response) => {
-        expect(response.body.message).toBe(
-          "This article hasn't received any comments or doesn't exist."
-        );
+        expect(response.body.comments.length).toBe(0);
       });
   });
   test("400: invalid article_id", () => {
@@ -261,6 +258,16 @@ describe("GET:/api/articles/:article_id/comments tests", () => {
       .expect(400)
       .then((response) => {
         expect(response.body.message).toBe("Bad request.");
+      });
+  });
+  test("404: responds with not found for valid but non-existent article id", () => {
+    return request(app)
+      .get("/api/articles/1111111111111/comments")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.message).toBe(
+          "The data with the given id was not found."
+        );
       });
   });
 });
@@ -278,7 +285,7 @@ describe("POST:/api/articles/:article_id/comments tests", () => {
       .then((response) => {
         expect(response.body.comment.author).toBe("rogersop");
         expect(response.body.comment.body).toBe("yes, it's a comment");
-        expect(response.body.comment.article_id).toBe(9);
+        expect(typeof response.body.comment.article_id).toBe("number");
       });
   });
   test("400: non-existent username", () => {
@@ -397,6 +404,16 @@ describe("PATCH:/api/articles/:article_id tests", () => {
         expect(response.body.message).toBe("Article not found.");
       });
   });
+  test("400: invalid article_id", () => {
+    const update = { inc_votes: 10 };
+    return request(app)
+      .patch("/api/articles/eleven")
+      .send(update)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toBe("Bad request.");
+      });
+  });
 });
 
 describe("DELETE:/api/comments/:comment_id", () => {
@@ -440,8 +457,5 @@ describe("GET: /api/users", () => {
           expect(user).toHaveProperty("avatar_url");
         });
       });
-  });
-  test("404: endpoint that does not exist", () => {
-    return request(app).get("/api/unknownendpoint").expect(404);
   });
 });

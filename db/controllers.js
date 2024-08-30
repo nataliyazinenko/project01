@@ -12,9 +12,9 @@ const fs = require("fs/promises");
 
 exports.getEndpointsDocumentation = (req, res, next) => {
   fs.readFile("./endpoints.json", "utf-8")
-    .then((contents) => {
-      const parsedContents = JSON.parse(contents);
-      res.status(200).send(parsedContents);
+    .then((endpoints) => {
+      const parsedEndpoints = JSON.parse(endpoints);
+      res.status(200).send(parsedEndpoints);
     })
     .catch((err) => {
       next(err);
