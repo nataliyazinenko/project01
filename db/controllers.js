@@ -66,7 +66,7 @@ exports.getArticleComments = (req, res, next) => {
 
 exports.addComment = (req, res, next) => {
   const { article_id } = req.params;
-  const { newComment } = req.body;
+  const newComment = req.body;
   leaveAComment(article_id, newComment)
     .then((comment) => {
       res.status(201).send({ comment });
