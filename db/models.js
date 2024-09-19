@@ -13,7 +13,14 @@ exports.fetchArticles = (
   topic,
   queryParameters = {}
 ) => {
-  const sortableColumns = ["title", "topic", "author", "created_at", "votes"];
+  const sortableColumns = [
+    "title",
+    "topic",
+    "author",
+    "created_at",
+    "votes",
+    "comment_count",
+  ];
   const inOrder = ["ASC", "DESC"];
   const validQueryParameters = ["sort_by", "order", "topic"];
   const queryVals = [];
